@@ -34,7 +34,7 @@ namespace octokit.net.Extensions
         public Policy DefaultRateLimitExceededExceptionPolicy => Policy.Handle<RateLimitExceededException>()
             .RetryAsync(
             retryCount: 1,
-            onRetry: async (exception, retryCount) =>
+            onRetryAsync: async (exception, retryCount) =>
             {
                 var e = exception as RateLimitExceededException;
 
@@ -43,15 +43,13 @@ namespace octokit.net.Extensions
 
                 _logger?.LogInformation("A {exception} has occurred. Next try will happen in {time} seconds", "RateLimitExceededException", sleepMilliseconds/1000);
 
-                await Task
-                .Delay(sleepMilliseconds < 0 ? 10 : sleepMilliseconds + 1000)
-                .ConfigureAwait(false);
+                await Task.Delay(sleepMilliseconds < 0 ? 10 : sleepMilliseconds + 1000).ConfigureAwait(false);
             });
 
         public Policy DefaultAbuseExceptionExceptionPolicy => Policy.Handle<AbuseException>()
            .RetryAsync(
             retryCount: 1,
-            onRetry: async (exception, retryCount) =>
+            onRetryAsync: async (exception, retryCount) =>
             {
                 var e = exception as AbuseException;
 
