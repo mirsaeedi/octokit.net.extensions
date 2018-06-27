@@ -25,7 +25,7 @@ onRetry: (exception, timespan) =>
 });
 ```
 ## Resiliency against exceeeding GitHub's rate limit policy
-In case of reaching the Github's [rate limit](), octokit throws _RateLimitExceededException_ exception. To deal with the situation, the built-in policy tries to prevent the whole process from stopping by waiting untill the rate limit window expires. The default implemented policy is as follows
+In case of reaching the Github's [rate limit](https://developer.github.com/v3/#rate-limiting), octokit throws _RateLimitExceededException_ exception. To deal with the situation, the built-in policy tries to prevent the whole process from stopping by waiting untill the rate limit window expires. The default implemented policy is as follows
 
 ```C#
 public Policy DefaultRateLimitExceededExceptionPolicy => Policy.Handle<RateLimitExceededException>()
@@ -41,7 +41,7 @@ public Policy DefaultRateLimitExceededExceptionPolicy => Policy.Handle<RateLimit
 });
 ```
 ## Resiliency against GitHub's abuse policy
-In case of [abusing]() the Github policy, octokit throws _AbuseException_ exception. To deal with the situation, the built-in policy tries to prevent the whole process from stopping by waiting untill the abuse time window expires. The default implemented policy is as follows
+In case of [abusing](https://developer.github.com/v3/guides/best-practices-for-integrators/#dealing-with-abuse-rate-limits) the Github policy, octokit throws _AbuseException_ exception. To deal with the situation, the built-in policy tries to prevent the whole process from stopping by waiting untill the abuse time window expires. The default implemented policy is as follows
 
 ```C#
 public Policy DefaultAbuseExceptionExceptionPolicy => Policy.Handle<AbuseException>()
