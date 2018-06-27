@@ -71,3 +71,14 @@ var credentialStore = new InMemoryCredentialStore(new Octokit.Credentials(token)
 var client = new ResilientGitHubClientFactory(logger).Create(new ProductHeaderValue(agentName),credentialStore);
 
 ```
+
+# Custom Policies
+
+You are able to replace the built-in Polly policies with your own. In fact, _ResilientGitHubClientFactory.Create_ takes _params IAsyncPolicy[]_ as its last parameter. These policies define how we should act in case of happening any pre-defined catastrophic situation.
+
+```C#
+
+var policy = Policy.Handle<HttpRequestException>().RetryAsync(2);
+var client = new ResilientGitHubClientFactory(logger).Create(new ProductHeaderValue(agentName),policy);
+
+```
