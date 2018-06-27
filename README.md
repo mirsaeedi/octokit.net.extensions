@@ -83,7 +83,7 @@ var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(ag
 
 ```
 
-# Install (Nuget)
+# Install via [Nuget](https://www.nuget.org/packages/octokit.net.Extensions)
 
 ```powershell
 Install-Package  octokit.net.Extensions
