@@ -79,7 +79,7 @@ You are able to replace the built-in Polly policies with your own. In fact, _Res
 ```C#
 
 var policy = Policy.Handle<HttpRequestException>().RetryAsync(2);
-var client = new ResilientGitHubClientFactory(logger).Create(new ProductHeaderValue(agentName),policy);
+var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(agentName),policy);
 
 ```
 
