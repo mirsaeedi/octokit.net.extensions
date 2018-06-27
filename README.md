@@ -29,7 +29,7 @@ In case of reaching the Github's [rate limit](https://developer.github.com/v3/#r
 
 ```C#
 public Policy DefaultRateLimitExceededExceptionPolicy => Policy.Handle<RateLimitExceededException>()
-.RetryAsync(retryCount: 1,onRetry: async (exception, retryCount) =>
+.RetryAsync(retryCount: 1,onRetryAsync: async (exception, retryCount) =>
 {
   var e = exception as RateLimitExceededException;
 
@@ -45,7 +45,7 @@ In case of [abusing](https://developer.github.com/v3/guides/best-practices-for-i
 
 ```C#
 public Policy DefaultAbuseExceptionExceptionPolicy => Policy.Handle<AbuseException>()
-.RetryAsync(retryCount: 1,onRetry: async (exception, retryCount) =>
+.RetryAsync(retryCount: 1,onRetryAsync: async (exception, retryCount) =>
 {
   var e = exception as AbuseException;
 
