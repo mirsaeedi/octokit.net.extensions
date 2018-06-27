@@ -22,6 +22,9 @@ namespace octokit.net.Extensions
             params IAsyncPolicy[] policies)
         {
 
+            if(policies is null)
+                policies = new ResilientPolicies(_logger).DefaultResilientPolicies; 
+
             var policy = Policy.WrapAsync(policies);
             
             var githubConnection = new Connection(productHeaderValue,
@@ -43,19 +46,7 @@ namespace octokit.net.Extensions
            params IAsyncPolicy[] policies)
         {
 
-            var policy = Policy.WrapAsync(policies);
-
-            var githubConnection = new Connection(productHeaderValue,
-               GitHubClient.GitHubApiUrl,
-               new InMemoryCredentialStore(Credentials.Anonymous),
-               new HttpClientAdapter(() => new GitHubResilientDelegatingHandler(policy, _logger)
-               {
-                   InnerHandler = HttpMessageHandlerFactory.CreateDefault()
-               }),
-               new SimpleJsonSerializer()
-               );
-
-            return new GitHubClient(githubConnection);
+            return Create(productHeaderValue, new InMemoryCredentialStore(Credentials.Anonymous),policies);
         }
     }
 }
