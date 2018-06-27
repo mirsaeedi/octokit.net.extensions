@@ -82,3 +82,9 @@ var policy = Policy.Handle<HttpRequestException>().RetryAsync(2);
 var client = new ResilientGitHubClientFactory(logger).Create(new ProductHeaderValue(agentName),policy);
 
 ```
+
+# Install (Nuget)
+
+```powershell
+Install-Package  octokit.net.Extensions
+```
