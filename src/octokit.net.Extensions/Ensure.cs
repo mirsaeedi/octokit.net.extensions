@@ -5,7 +5,9 @@ using System.Text;
 
 namespace octokit.net.Extensions
 {
+
     /// <summary>
+    /// This dlass is the exact copy of https://github.com/octokit/octokit.net/blob/master/Octokit/Helpers/Ensure.cs
     ///   Ensure input parameters
     /// </summary>
     internal static class Ensure

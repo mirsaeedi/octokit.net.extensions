@@ -7,6 +7,9 @@ using System.Text;
 
 namespace octokit.net.Extensions
 {
+    /// <summary>
+    /// This dlass is the exact copy of https://github.com/octokit/octokit.net/blob/master/Octokit/Http/Response.cs
+    /// </summary>
     internal class Response : IResponse
     {
         public Response() : this(new Dictionary<string, string>())

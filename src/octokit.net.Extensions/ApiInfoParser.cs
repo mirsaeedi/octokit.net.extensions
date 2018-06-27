@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 
 namespace octokit.net.Extensions
 {
+    /// <summary>
+    /// This dlass is the exact copy of https://github.com/octokit/octokit.net/blob/master/Octokit/Http/ApiInfoParser.cs
+    /// </summary>
     internal static class ApiInfoParser
     {
         const RegexOptions regexOptions =
