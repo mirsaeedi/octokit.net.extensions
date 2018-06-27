@@ -11,7 +11,7 @@ namespace octokit.net.Extensions
     public class ResilientGitHubClientFactory
     {
         private readonly ILogger _logger;
-        public ResilientGitHubClientFactory(ILogger logger=null)
+        public ResilientGitHubClientFactory(ILogger logger = null)
         {
             _logger = logger;
         }
@@ -22,10 +22,10 @@ namespace octokit.net.Extensions
             params IAsyncPolicy[] policies)
         {
 
-            if(policies is null)
+            if (policies is null || policies.Length==0)
                 policies = new ResilientPolicies(_logger).DefaultResilientPolicies; 
 
-            var policy = Policy.WrapAsync(policies);
+            var policy = policies.Length>1? Policy.WrapAsync(policies):policies[0];
             
             var githubConnection = new Connection(productHeaderValue,
                GitHubClient.GitHubApiUrl,

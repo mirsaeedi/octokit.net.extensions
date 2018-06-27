@@ -1,7 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Mirsaeedi</Authors>
+    <Title>octokit.net.Extensions</Title>
+    <Description>This library extends octokit.net, the well-known GitHub client, by enriching it with resilient connections and logging capabilities. This project hosts the awesome Polly at its heart.
+    </Description>
+    <PackageProjectUrl>https://github.com/mirsaeedi/octokit.net.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mirsaeedi/octokit.net.Extensions</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <Version>0.30</Version>
+    <PackageTags>octokit</PackageTags>
+    <PackageLicenseUrl>https://github.com/mirsaeedi/octokit.net.Extensions/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>

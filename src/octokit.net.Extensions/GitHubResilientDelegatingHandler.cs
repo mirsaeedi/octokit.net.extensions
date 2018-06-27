@@ -14,10 +14,10 @@ namespace octokit.net.Extensions
 {
     class GitHubResilientDelegatingHandler : DelegatingHandler
     {
-        private readonly Policy _policy;
+        private readonly IAsyncPolicy _policy;
         private readonly ILogger _logger;
 
-        public GitHubResilientDelegatingHandler(Policy policy,ILogger logger=null)
+        public GitHubResilientDelegatingHandler(IAsyncPolicy policy,ILogger logger=null)
         {
             _policy = policy;
             _logger = logger;
