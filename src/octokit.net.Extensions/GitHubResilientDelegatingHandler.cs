@@ -46,7 +46,8 @@ namespace octokit.net.Extensions
             _logger?.LogInformation("Sending Request: {requestMethod} - {requestUrl}"
                 ,request.Method.Method,request.RequestUri.ToString());
 
-            var httpResponse = await base.SendAsync(request, cancellationToken)
+            // cannot used the cancelationToken because its timeout is preconfigured to 100 seconds by Octokit
+            var httpResponse = await base.SendAsync(request, CancellationToken.None)
                 .ConfigureAwait(false);
 
             _logger?.LogInformation("Response Recieved. Status Code: {statusCode}",httpResponse.StatusCode.ToString());

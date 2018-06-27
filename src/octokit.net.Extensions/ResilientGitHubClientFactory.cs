@@ -38,7 +38,9 @@ namespace octokit.net.Extensions
                new SimpleJsonSerializer()
                );
 
-            return new GitHubClient(githubConnection);
+            var githubClient = new GitHubClient(githubConnection);
+
+            return githubClient;
         }
 
         public GitHubClient Create(

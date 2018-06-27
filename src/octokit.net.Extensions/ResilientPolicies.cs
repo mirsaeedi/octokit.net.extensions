@@ -43,7 +43,7 @@ namespace octokit.net.Extensions
 
                 _logger?.LogInformation("A {exception} has occurred. Next try will happen in {time} seconds", "RateLimitExceededException", sleepMilliseconds/1000);
 
-                await Task.Delay(sleepMilliseconds < 0 ? 10 : sleepMilliseconds + 1000).ConfigureAwait(false);
+                await Task.Delay(sleepMilliseconds).ConfigureAwait(false);
             });
 
         public Policy DefaultAbuseExceptionExceptionPolicy => Policy.Handle<AbuseException>()
