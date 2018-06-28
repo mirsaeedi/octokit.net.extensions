@@ -67,8 +67,8 @@ var logger = new LoggerFactory()
             .AddConsole().AddDebug()
             .CreateLogger("Github.Octokit.Logger");
 
-var credentialStore = new InMemoryCredentialStore(new Octokit.Credentials(token));
-var client = new ResilientGitHubClientFactory(logger).Create(new ProductHeaderValue(agentName),credentialStore);
+var credentials = new Octokit.Credentials(token);
+var client = new ResilientGitHubClientFactory(logger).Create(new ProductHeaderValue(agentName), credentials);
 
 ```
 
