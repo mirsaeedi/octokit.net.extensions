@@ -5,11 +5,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Mirsaeedi</Authors>
-    <Title>octokit.net.Extensions</Title>
-    <Description>This library extends octokit.net, the well-known GitHub client, by enriching it with resilient connections and logging capabilities. This project hosts the awesome Polly at its heart.
+    <Title>Octokit.Extensions</Title>
+    <Description>This library extends Octokit.net, the well-known GitHub client, by enriching it with resilient connections and logging capabilities. This project hosts the awesome Polly at its heart.
     </Description>
-    <PackageProjectUrl>https://github.com/mirsaeedi/octokit.net.Extensions</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/mirsaeedi/octokit.net.Extensions</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/mirsaeedi/octokit.net.extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mirsaeedi/octokit.net.extensions</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <Version>1.0.0</Version>
     <PackageTags>octokit</PackageTags>

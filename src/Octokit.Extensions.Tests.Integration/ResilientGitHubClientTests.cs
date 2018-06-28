@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using octokit.net.Extensions;
 using Xunit;
 
 namespace Octokit.Extensions.Tests.Integration

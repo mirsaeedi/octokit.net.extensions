@@ -15,7 +15,7 @@ namespace Octokit.Extensions.Tests.Integration
             var githubPassword = Environment.GetEnvironmentVariable("OCTOKIT_GITHUBPASSWORD");
 
             if (githubUsername == null || githubPassword == null)
-                return null;
+                return Credentials.Anonymous;
 
             return new Credentials(githubUsername, githubPassword);
         });
