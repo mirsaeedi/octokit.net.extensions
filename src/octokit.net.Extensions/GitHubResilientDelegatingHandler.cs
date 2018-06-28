@@ -46,7 +46,7 @@ namespace octokit.net.Extensions
             _logger?.LogInformation("Sending Request: {requestMethod} - {requestUrl}"
                 ,request.Method.Method,request.RequestUri.ToString());
 
-            // cannot used the cancelationToken because its timeout is preconfigured to 100 seconds by Octokit
+            // cannot use the cancelationToken because its timeout is preconfigured to 100 seconds by Octokit
             var httpResponse = await base.SendAsync(request, CancellationToken.None)
                 .ConfigureAwait(false);
 

@@ -11,9 +11,10 @@
     <PackageProjectUrl>https://github.com/mirsaeedi/octokit.net.Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mirsaeedi/octokit.net.Extensions</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <Version>1.0.1</Version>
+    <Version>1.0.0</Version>
     <PackageTags>octokit</PackageTags>
     <PackageLicenseUrl>https://github.com/mirsaeedi/octokit.net.Extensions/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageId>Octokit.Extensions</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
