@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\octokit.net.Extensions\octokit.net.Extensions.csproj" />
+    <ProjectReference Include="..\Octokit.Extensions\Octokit.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

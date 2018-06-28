@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace octokit.net.Extensions
+namespace Octokit.Extensions
 {
 
     /// <summary>
-    /// This dlass is the exact copy of https://github.com/octokit/octokit.net/blob/master/Octokit/Helpers/Ensure.cs
+    /// This class is the exact copy of https://github.com/octokit/octokit.net/blob/master/Octokit/Helpers/Ensure.cs
     ///   Ensure input parameters
     /// </summary>
     internal static class Ensure

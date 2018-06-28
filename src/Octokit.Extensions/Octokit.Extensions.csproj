@@ -15,6 +15,8 @@
     <PackageTags>octokit</PackageTags>
     <PackageLicenseUrl>https://github.com/mirsaeedi/octokit.net.Extensions/blob/master/LICENSE</PackageLicenseUrl>
     <PackageId>Octokit.Extensions</PackageId>
+    <AssemblyName>Octokit.Extensions</AssemblyName>
+    <RootNamespace>Octokit.Extensions</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,7 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace octokit.net.Extensions
+namespace Octokit.Extensions
 {
     public class ResilientPolicies
     {

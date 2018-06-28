@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace octokit.net.Extensions
+namespace Octokit.Extensions
 {
     class GitHubResilientDelegatingHandler : DelegatingHandler
     {

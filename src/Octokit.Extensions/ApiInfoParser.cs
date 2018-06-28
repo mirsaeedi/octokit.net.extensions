@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace octokit.net.Extensions
+namespace Octokit.Extensions
 {
     /// <summary>
     /// This dlass is the exact copy of https://github.com/octokit/octokit.net/blob/master/Octokit/Http/ApiInfoParser.cs

@@ -3,7 +3,7 @@ using Octokit;
 using Octokit.Internal;
 using Polly;
 
-namespace octokit.net.Extensions
+namespace Octokit.Extensions
 {
     public class ResilientGitHubClientFactory
     {
