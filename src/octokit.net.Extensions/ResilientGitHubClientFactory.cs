@@ -2,15 +2,13 @@
 using Octokit;
 using Octokit.Internal;
 using Polly;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace octokit.net.Extensions
 {
     public class ResilientGitHubClientFactory
     {
         private readonly ILogger _logger;
+
         public ResilientGitHubClientFactory(ILogger logger = null)
         {
             _logger = logger;
@@ -18,10 +16,9 @@ namespace octokit.net.Extensions
 
         public GitHubClient Create(
             ProductHeaderValue productHeaderValue,
-            ICredentialStore credentialStore,
+            Credentials credentials,
             params IAsyncPolicy[] policies)
         {
-
             if (policies is null || policies.Length==0)
                 policies = new ResilientPolicies(_logger).DefaultResilientPolicies; 
 
@@ -29,7 +26,7 @@ namespace octokit.net.Extensions
             
             var githubConnection = new Connection(productHeaderValue,
                GitHubClient.GitHubApiUrl,
-               credentialStore,
+               new InMemoryCredentialStore(credentials),
                new HttpClientAdapter(() =>
                new GitHubResilientDelegatingHandler(policy,_logger)
                {
@@ -47,8 +44,7 @@ namespace octokit.net.Extensions
            ProductHeaderValue productHeaderValue,
            params IAsyncPolicy[] policies)
         {
-
-            return Create(productHeaderValue, new InMemoryCredentialStore(Credentials.Anonymous),policies);
+            return Create(productHeaderValue, Credentials.Anonymous, policies);
         }
     }
 }
