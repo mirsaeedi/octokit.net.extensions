@@ -52,74 +52,8 @@ namespace octokit.net.Extensions
 
             _logger?.LogInformation("Response Recieved. Status Code: {statusCode}",httpResponse.StatusCode.ToString());
 
-            var githubRespone = await BuildResponse(httpResponse);
-
-            _logger?.LogInformation("Remaining Limit: {remaining} - Reset At: {reset}",
-                githubRespone.ApiInfo.RateLimit.Remaining,
-                githubRespone.ApiInfo.RateLimit.Reset.ToLocalTime());
-
-            MethodInfo handleErrors = typeof(Connection)
-                .GetMethod("HandleErrors",
-                BindingFlags.NonPublic | BindingFlags.Static);
-
-            try
-            {
-                handleErrors.Invoke(this, new object[] { githubRespone });
-            }
-            catch (TargetInvocationException e)
-            {
-                throw e.InnerException;
-            }
-
 
             return httpResponse;
-        }
-
-        protected virtual async Task<IResponse> BuildResponse(HttpResponseMessage responseMessage)
-        {
-            Ensure.ArgumentNotNull(responseMessage, nameof(responseMessage));
-
-            object responseBody = null;
-            string contentType = null;
-
-            // We added support for downloading images,zip-files and application/octet-stream. 
-            // Let's constrain this appropriately.
-            var binaryContentTypes = new[] {
-                "application/zip" ,
-                "application/x-gzip" ,
-                "application/octet-stream"};
-
-            var content = responseMessage.Content;
-
-            if (content != null)
-            {
-                contentType = GetContentMediaType(responseMessage.Content);
-
-                if (contentType != null && (contentType.StartsWith("image/") || binaryContentTypes
-                    .Any(item => item.Equals(contentType, StringComparison.OrdinalIgnoreCase))))
-                {
-                    responseBody = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    responseBody = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-            }
-
-            return new Response(
-                responseMessage.StatusCode,
-                responseBody,
-                responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()),
-                contentType);
-        }
-
-        static string GetContentMediaType(HttpContent httpContent)
-        {
-            if (httpContent.Headers != null && httpContent.Headers.ContentType != null)
-            {
-                return httpContent.Headers.ContentType.MediaType;
-            }
-            return null;
         }
     }
 }
