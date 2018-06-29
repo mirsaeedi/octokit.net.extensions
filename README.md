@@ -1,5 +1,9 @@
-# oktokit.net.Extensions
-This library extends octokit.net, the well-known GitHub client, by enriching it with resilient connections and logging capabilities. This project hosts the awesome [Polly](https://github.com/App-vNext/Polly) at its heart. Using octokit.net.Extension you get the following out of the box:
+# oktokit.Extensions
+This library extends octokit.net, the well-known GitHub client, by enriching it with resilient connections and logging capabilities. In fact, using this library your process won't halt in case of happening exceptions such as Rate Limit, Abuse, Http Exceptions, etc.  
+
+Octokit.Extension adds a middleware to the Octokit's _HttpClient_ and will try to resend the requests if anything goes wrong. There are some built-in policies that define how Octokit.Extensions should act to handle the exceptions. However, you can easily define your own custom policies to deal with exceptions based on your requirements.
+
+This project hosts the awesome [Polly](https://github.com/App-vNext/Polly) at its heart. We are using Polly to define policies and to opt-in the _retry_ behaviour. Using octokit.net.Extension you get the following policies and behavior out of the box.
 
 ## Resiliency against sudden and random http failures
 In case of happening _HttpRequestException_, the built-in policy tries to prevent the whole process from stopping by resending the request according to the following policy.
