@@ -16,6 +16,10 @@ namespace Octokit.Extensions
 {
     class GitHubResilientHandler : DelegatingHandler
     {
+        // we need this instance to be able to call Octokit's internal code using reflection
+        private static Lazy<HttpClientAdapter> _httpClientAdapter = new Lazy<HttpClientAdapter>(()=> 
+            new HttpClientAdapter(()=>new GitHubResilientHandler(null, null)), true);
+
         private readonly IAsyncPolicy _policy;
         private readonly ILogger _logger;
 
@@ -80,13 +84,12 @@ namespace Octokit.Extensions
 
         private async Task<dynamic> GetGitHubResponse(HttpResponseMessage httpResponse)
         {
-            var httpClientAdapter = new HttpClientAdapter(() => new GitHubResilientHandler(null, null));
 
             MethodInfo buildResponseMethod = typeof(HttpClientAdapter).GetMethod("BuildResponse", BindingFlags.NonPublic | BindingFlags.Instance);
 
             var clonedHttpResponse = await CloneResponseAsync(httpResponse).ConfigureAwait(false);
 
-            var githubResponse = await(dynamic) buildResponseMethod.Invoke(httpClientAdapter, new object[] { clonedHttpResponse });
+            var githubResponse = await(dynamic) buildResponseMethod.Invoke(_httpClientAdapter.Value, new object[] { clonedHttpResponse });
 
             return githubResponse;
         }
