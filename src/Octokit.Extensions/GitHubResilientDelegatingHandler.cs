@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Octokit;
+using Octokit.Internal;
 using Polly;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -12,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace Octokit.Extensions
 {
-    class GitHubResilientDelegatingHandler : DelegatingHandler
+    class GitHubResilientHandler : DelegatingHandler
     {
         private readonly IAsyncPolicy _policy;
         private readonly ILogger _logger;
 
-        public GitHubResilientDelegatingHandler(IAsyncPolicy policy,ILogger logger=null)
+        public GitHubResilientHandler(IAsyncPolicy policy,ILogger logger=null)
         {
             _policy = policy;
             _logger = logger;
@@ -47,79 +49,68 @@ namespace Octokit.Extensions
                 ,request.Method.Method,request.RequestUri.ToString());
 
             // cannot use the cancelationToken because its timeout is preconfigured to 100 seconds by Octokit
-            var httpResponse = await base.SendAsync(request, CancellationToken.None)
-                .ConfigureAwait(false);
+            var httpResponse = await base.SendAsync(request, CancellationToken.None).ConfigureAwait(false);
 
             _logger?.LogInformation("Response Recieved. Status Code: {statusCode}",httpResponse.StatusCode.ToString());
 
-            var githubRespone = await BuildResponse(httpResponse);
-
+            var githubResponse = await GetGitHubResponse(httpResponse).ConfigureAwait(false);
+           
             _logger?.LogInformation("Remaining Limit: {remaining} - Reset At: {reset}",
-                githubRespone.ApiInfo.RateLimit.Remaining,
-                githubRespone.ApiInfo.RateLimit.Reset.ToLocalTime());
+                (int)githubResponse.ApiInfo.RateLimit.Remaining,
+                (DateTime)githubResponse.ApiInfo.RateLimit.Reset.ToLocalTime());
 
-            MethodInfo handleErrors = typeof(Connection)
-                .GetMethod("HandleErrors",
-                BindingFlags.NonPublic | BindingFlags.Static);
+            TryToThrowGitHubRelatedErrors(githubResponse);
+
+            return httpResponse;
+        }
+
+        private void TryToThrowGitHubRelatedErrors(dynamic githubResponse)
+        {
+            MethodInfo handleErrors = typeof(Connection).GetMethod("HandleErrors", BindingFlags.NonPublic | BindingFlags.Static);
 
             try
             {
-                handleErrors.Invoke(this, new object[] { githubRespone });
+                handleErrors.Invoke(this, new object[] { githubResponse });
             }
             catch (TargetInvocationException e)
             {
                 throw e.InnerException;
             }
-
-
-            return httpResponse;
         }
 
-        protected virtual async Task<IResponse> BuildResponse(HttpResponseMessage responseMessage)
+        private async Task<dynamic> GetGitHubResponse(HttpResponseMessage httpResponse)
         {
-            Ensure.ArgumentNotNull(responseMessage, nameof(responseMessage));
+            var httpClientAdapter = new HttpClientAdapter(() => new GitHubResilientHandler(null, null));
 
-            object responseBody = null;
-            string contentType = null;
+            MethodInfo buildResponseMethod = typeof(HttpClientAdapter).GetMethod("BuildResponse", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            // We added support for downloading images,zip-files and application/octet-stream. 
-            // Let's constrain this appropriately.
-            var binaryContentTypes = new[] {
-                "application/zip" ,
-                "application/x-gzip" ,
-                "application/octet-stream"};
+            var clonedHttpResponse = await CloneResponseAsync(httpResponse).ConfigureAwait(false);
 
-            var content = responseMessage.Content;
+            var githubResponse = await(dynamic) buildResponseMethod.Invoke(httpClientAdapter, new object[] { clonedHttpResponse });
 
-            if (content != null)
-            {
-                contentType = GetContentMediaType(responseMessage.Content);
-
-                if (contentType != null && (contentType.StartsWith("image/") || binaryContentTypes
-                    .Any(item => item.Equals(contentType, StringComparison.OrdinalIgnoreCase))))
-                {
-                    responseBody = await responseMessage.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    responseBody = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
-                }
-            }
-
-            return new Response(
-                responseMessage.StatusCode,
-                responseBody,
-                responseMessage.Headers.ToDictionary(h => h.Key, h => h.Value.First()),
-                contentType);
+            return githubResponse;
         }
 
-        static string GetContentMediaType(HttpContent httpContent)
+        private async Task<HttpResponseMessage> CloneResponseAsync(HttpResponseMessage response)
         {
-            if (httpContent.Headers != null && httpContent.Headers.ContentType != null)
+            var newResponse = new HttpResponseMessage(response.StatusCode);
+            var ms = new MemoryStream();
+
+            foreach (var v in response.Headers) newResponse.Headers.TryAddWithoutValidation(v.Key, v.Value);
+
+            if (response.Content != null)
             {
-                return httpContent.Headers.ContentType.MediaType;
+                // need to call LoadIntoBuffer, otherwise Octokit complains that it can't read the stream
+                await response.Content.LoadIntoBufferAsync().ConfigureAwait(false);
+                await response.Content.CopyToAsync(ms).ConfigureAwait(false);
+
+                ms.Position = 0;
+                newResponse.Content = new StreamContent(ms);
+                foreach (var v in response.Content.Headers) newResponse.Content.Headers.TryAddWithoutValidation(v.Key, v.Value);
+                
             }
-            return null;
+
+            return newResponse;
         }
     }
 }

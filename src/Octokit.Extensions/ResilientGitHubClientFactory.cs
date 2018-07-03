@@ -28,7 +28,7 @@ namespace Octokit.Extensions
                GitHubClient.GitHubApiUrl,
                new InMemoryCredentialStore(credentials),
                new HttpClientAdapter(() =>
-               new GitHubResilientDelegatingHandler(policy,_logger)
+               new GitHubResilientHandler(policy,_logger)
                {
                    InnerHandler = HttpMessageHandlerFactory.CreateDefault()
                }),
