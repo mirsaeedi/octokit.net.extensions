@@ -21,7 +21,7 @@ namespace Octokit.Extensions
 
         public Task ClearAll()
         {
-            throw new NotImplementedException();
+            throw new InvalidOperationException("You cannot clear the in-memory cache");
         }
 
         public async Task<bool> Exists(CacheKey key)
