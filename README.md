@@ -1,5 +1,5 @@
 # oktokit.Extensions
-This library extends octokit.net, the well-known GitHub client, by enriching it with resilient connections and logging capabilities. In fact, using this library your process won't halt in case of happening exceptions such as Rate Limit, Abuse, Http Exceptions, etc.  
+This library extends octokit.net, the well-known GitHub client, by enriching it with caching, resilient connections and logging capabilities. In fact, using this library your process won't halt in case of happening exceptions such as Rate Limit, Abuse, Http Exceptions, etc.  
 
 Octokit.Extension adds a middleware to the Octokit's _HttpClient_ and will try to resend the requests if anything goes wrong. There are some built-in policies that define how Octokit.Extensions should act to handle the exceptions. However, you can easily define your own custom policies to deal with exceptions based on your requirements.
 
@@ -16,6 +16,9 @@ onRetry: (exception, timespan) =>
 _logger?.LogInformation("A {exception} has occurred. Next try will happen in {time} seconds","HttpRequestException",timespan.TotalSeconds);
 });
 ```
+#Policies
+
+All the default policies are implemented inside [ResilientPolicies](https://github.com/mirsaeedi/octokit.net.extensions/blob/master/src/Octokit.Extensions/Resiliency/ResilientPolicies.cs) class. 
 
 ## Resiliency against http timeouts
 In case of happening timout exceptions which been carrying in _TaskCanceledException_ exception, the built-in policy tries to prevent the whole process from stopping by resending the request according to the following policy.
@@ -60,8 +63,24 @@ public Policy DefaultAbuseExceptionExceptionPolicy => Policy.Handle<AbuseExcepti
   await Task.Delay(sleepMilliseconds).ConfigureAwait(false);
 });
 ```
+## Caching
 
-# Usage
+You can easily opt-in your cache provider of choice by implementing [ICacheProvider](https://github.com/mirsaeedi/octokit.net.extensions/blob/master/src/Octokit.Extensions/Caching/ICacheProvider.cs) interface. Also, there is an [in-memory](https://github.com/mirsaeedi/octokit.net.extensions/blob/master/src/Octokit.Extensions/Caching/InMemoryCacheProvider.cs) built-in cache provider available to you.
+
+
+```C#
+
+var credentials = new Octokit.Credentials(token);
+
+// with default in-memory caching
+var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(agentName), credentials,new InMemoryCacheProvider());
+
+// without caching
+var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(agentName), credentials);
+
+```
+
+# Logging
 
 Integrating octokit.net.Extension in your source code is straightforward. In fact, instead of instantiating octokit's _GithubClient_ via constructor, you just need to use the _ResilientGitHubClientFactory_ which takes an optional _ILogger_ to log the events.
 
@@ -72,18 +91,31 @@ var logger = new LoggerFactory()
             .CreateLogger("Github.Octokit.Logger");
 
 var credentials = new Octokit.Credentials(token);
+
+// with logging
 var client = new ResilientGitHubClientFactory(logger).Create(new ProductHeaderValue(agentName), credentials);
+
+// withiut logging
+var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(agentName), credentials);
 
 ```
 
-# Custom Policies
+# Policies
 
-You are able to replace the built-in Polly policies with your own. In fact, _ResilientGitHubClientFactory.Create_ takes _params IAsyncPolicy[]_ as its last parameter. These policies define how we should act in case of happening any pre-defined catastrophic situation.
+You are able to replace the built-in Polly policies with your own. In fact, _ResilientGitHubClientFactory.Create_ takes _params IAsyncPolicy[]_ as its last parameter. These policies define how we should act in case of happening any pre-defined catastrophic situation. If you don't pass any policies, _Octokit.Extention_ will use the [_DefaultResilientPolicies](https://github.com/mirsaeedi/octokit.net.extensions/blob/618e4e936c188c28d613e4b548924aa447635548/src/Octokit.Extensions/Resiliency/ResilientPolicies.cs#L65)_ as its policies.
 
 ```C#
-
+// using a custom policy.
 var policy = Policy.Handle<HttpRequestException>().RetryAsync(2);
 var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(agentName),policy);
+
+// using all the built-in policies automatically all-together
+var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(agentName));
+
+// using built-in policies selectively
+var builtinPolicies= new ResilientPolicies();
+var client = new ResilientGitHubClientFactory().Create(new ProductHeaderValue(agentName),builtinPolicies.DefaultRateLimitExceededExceptionPolicy,
+builtinPolicies.DefaultAbuseExceptionExceptionPolicy);
 
 ```
 
