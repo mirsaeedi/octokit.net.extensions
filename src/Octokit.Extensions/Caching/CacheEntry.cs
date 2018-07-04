@@ -11,18 +11,34 @@ namespace Octokit.Extensions
 {
     public class CacheEntry
     {
-        HttpStatusCode StatusCode { get; set; }
-        public CacheControlHeaderValue CacheControl { get; set; }
+        public CacheKey Key { get; internal set; }
+        public HttpStatusCode StatusCode { get; internal set; }
         public bool HasValidator => ETag != null || (Content != null && LastModified != null);
-        public DateTimeOffset? LastModified { get; set; }
+        public DateTimeOffset? LastModified { get; internal set; }
         public EntityTagHeaderValue ETag { get; internal set; }
-        byte[] Content { get; set; }
+        public byte[] Content { get; internal set; }
+        public Dictionary<string, IEnumerable<string>> ContentHeaders { get; internal set; } = new Dictionary<string, IEnumerable<string>>();
 
-        Dictionary<string, IEnumerable<string>> ContentHeaders { get; set; } = new Dictionary<string, IEnumerable<string>>();
+        public CacheEntry(CacheKey key,HttpStatusCode statusCode,DateTimeOffset? lastModified,EntityTagHeaderValue etag,byte[] content,
+            Dictionary<string, IEnumerable<string>> contentHeaders)
+        {
+            Key = key;
+            StatusCode = statusCode;
+            LastModified = lastModified;
+            ETag = etag;
+            Content = content;
+            ContentHeaders = contentHeaders;
+        }
+
+        private CacheEntry()
+        {
+
+        }
 
         public static async Task<CacheEntry> Create(HttpResponseMessage response)
         {
             var cacheEntry = new CacheEntry();
+            cacheEntry.Key = new CacheKey(response.RequestMessage.RequestUri);
             cacheEntry.StatusCode = response.StatusCode;
 
             cacheEntry.ETag = response.Headers?.ETag;

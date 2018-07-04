@@ -47,7 +47,7 @@ namespace Octokit.Extensions
 
             if (cacheProvider != null)
             {
-                handler = new HttpCacheHandler(handler,cacheProvider); 
+                handler = new HttpCacheHandler(handler,cacheProvider,logger); 
             }
 
             return handler;

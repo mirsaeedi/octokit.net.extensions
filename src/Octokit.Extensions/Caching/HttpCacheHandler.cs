@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -11,11 +12,13 @@ namespace Octokit.Extensions
     public class HttpCacheHandler : DelegatingHandler
     {
         private readonly ICacheProvider _cache;
+        private readonly ILogger _logger;
 
-        public HttpCacheHandler(HttpMessageHandler innerHandler, ICacheProvider cache)
+        public HttpCacheHandler(HttpMessageHandler innerHandler, ICacheProvider cache, ILogger logger = null)
         {
             _cache = cache;
             InnerHandler = innerHandler;
+            _logger = logger;
         }
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
@@ -38,6 +41,9 @@ namespace Octokit.Extensions
 
                 if (response.StatusCode == HttpStatusCode.NotModified)
                 {
+                    _logger?.LogInformation("Response returned from the cache. ETAG: {etag}, URI:{URI}",existingResponseEntry.ETag.Tag,
+                        request.RequestUri.AbsolutePath.ToString());
+
                     return CacheEntry.CreateHttpResponseMessage(existingResponseEntry,response);
                 }
 
