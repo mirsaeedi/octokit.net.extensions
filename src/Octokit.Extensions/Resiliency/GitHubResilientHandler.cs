@@ -18,13 +18,19 @@ namespace Octokit.Extensions
     {
         // we need this instance to be able to call Octokit's internal code using reflection
         private static Lazy<HttpClientAdapter> _httpClientAdapter = new Lazy<HttpClientAdapter>(()=> 
-            new HttpClientAdapter(()=>new GitHubResilientHandler(null, null)), true);
+            new HttpClientAdapter(()=>new GitHubResilientHandler()), true);
 
         private readonly IAsyncPolicy _policy;
         private readonly ILogger _logger;
 
-        public GitHubResilientHandler(IAsyncPolicy policy,ILogger logger=null)
+        private GitHubResilientHandler()
         {
+            _policy = null;
+            _logger = null;
+        }
+        public GitHubResilientHandler(HttpMessageHandler innerHandler,IAsyncPolicy policy,ILogger logger=null)
+        {
+            InnerHandler = innerHandler;
             _policy = policy;
             _logger = logger;
         }

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Net.Http;
+using Microsoft.Extensions.Logging;
 using Octokit;
 using Octokit.Internal;
 using Polly;
@@ -17,6 +19,7 @@ namespace Octokit.Extensions
         public GitHubClient Create(
             ProductHeaderValue productHeaderValue,
             Credentials credentials,
+            ICacheProvider cacheProvider=null,
             params IAsyncPolicy[] policies)
         {
             if (policies is null || policies.Length==0)
@@ -27,11 +30,7 @@ namespace Octokit.Extensions
             var githubConnection = new Connection(productHeaderValue,
                GitHubClient.GitHubApiUrl,
                new InMemoryCredentialStore(credentials),
-               new HttpClientAdapter(() =>
-               new GitHubResilientHandler(policy,_logger)
-               {
-                   InnerHandler = HttpMessageHandlerFactory.CreateDefault()
-               }),
+               new HttpClientAdapter(() => GetHttpHandlerChain(_logger, policy, cacheProvider)),
                new SimpleJsonSerializer()
                );
 
@@ -40,11 +39,28 @@ namespace Octokit.Extensions
             return githubClient;
         }
 
+        private HttpMessageHandler GetHttpHandlerChain(ILogger logger, IAsyncPolicy policy, ICacheProvider cacheProvider)
+        {
+            var handler = HttpMessageHandlerFactory.CreateDefault();
+
+            handler = new GitHubResilientHandler(handler, policy, _logger);
+
+            if (cacheProvider != null)
+            {
+                handler = new HttpCacheHandler(handler,cacheProvider); 
+            }
+
+            return handler;
+
+
+        }
+
         public GitHubClient Create(
            ProductHeaderValue productHeaderValue,
+           ICacheProvider cacheProvider = null,
            params IAsyncPolicy[] policies)
         {
-            return Create(productHeaderValue, Credentials.Anonymous, policies);
+            return Create(productHeaderValue, Credentials.Anonymous, cacheProvider, policies);
         }
     }
 }
