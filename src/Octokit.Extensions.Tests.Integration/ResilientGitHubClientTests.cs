@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -37,5 +38,34 @@ namespace Octokit.Extensions.Tests.Integration
             Assert.Equal("octokit", cachedRepo.Owner.Login);
             Assert.Equal("octokit.net", cachedRepo2.Name);
         }
+
+        [Fact]
+        public async Task MakesCachedWrappedOctokitRequest2()
+        {
+            var client = new ResilientGitHubClientFactory()
+                .Create(new ProductHeaderValue("Octokit.Extensions.Tests"), new InMemoryCacheProvider());
+
+            var owner = "dotnet";
+            var repo = "roslyn";
+            var pullRequestNumber = 28263;
+
+            var githubReviews = (await client
+                        .PullRequest
+                        .Review
+                        .GetAll(owner, repo, pullRequestNumber, new ApiOptions() { PageSize = 1000 }))
+                        .ToArray();
+
+            var cachedGithubReviews = (await client
+                        .PullRequest
+                        .Review
+                        .GetAll(owner, repo, pullRequestNumber, new ApiOptions() { PageSize = 1000 }))
+                        .ToArray();
+
+
+            Assert.Equal(githubReviews.Length,cachedGithubReviews.Length);
+
+        }
+
+
     }
 }

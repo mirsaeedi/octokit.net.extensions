@@ -67,7 +67,7 @@ namespace Octokit.Extensions
            
             _logger?.LogInformation("Remaining Limit: {remaining} - Reset At: {reset}",
                 (int)githubResponse.ApiInfo.RateLimit.Remaining,
-                (DateTime)githubResponse.ApiInfo.RateLimit.Reset.ToLocalTime());
+                (DateTimeOffset)githubResponse.ApiInfo.RateLimit.Reset.ToLocalTime());
 
             TryToThrowGitHubRelatedErrors(githubResponse);
 
@@ -88,7 +88,7 @@ namespace Octokit.Extensions
             }
         }
 
-        private async Task<dynamic> GetGitHubResponse(HttpResponseMessage httpResponse)
+        private async Task<IResponse> GetGitHubResponse(HttpResponseMessage httpResponse)
         {
 
             MethodInfo buildResponseMethod = typeof(HttpClientAdapter).GetMethod("BuildResponse", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -97,7 +97,7 @@ namespace Octokit.Extensions
 
             var githubResponse = await(dynamic) buildResponseMethod.Invoke(_httpClientAdapter.Value, new object[] { clonedHttpResponse });
 
-            return githubResponse;
+            return githubResponse as IResponse;
         }
 
         private async Task<HttpResponseMessage> CloneResponseAsync(HttpResponseMessage response)
