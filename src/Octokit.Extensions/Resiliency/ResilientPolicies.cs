@@ -39,7 +39,7 @@ namespace Octokit.Extensions
                 var e = exception as RateLimitExceededException;
 
                 var sleepMilliseconds = (int)(e.Reset.ToLocalTime() - DateTime.Now)
-                    .TotalMilliseconds;
+                    .TotalMilliseconds + 5*1000; // wait for more 5 seconds to make sure there'll be no problem.
 
                 _logger?.LogInformation("A {exception} has occurred. Next try will happen in {time} seconds", "RateLimitExceededException", sleepMilliseconds/1000);
 

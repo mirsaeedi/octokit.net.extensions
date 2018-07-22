@@ -55,13 +55,12 @@ namespace Octokit.Extensions
 
         private async Task<HttpResponseMessage> SendCoreAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            _logger?.LogInformation("Sending Request: {requestMethod} - {requestUrl}"
-                ,request.Method.Method,request.RequestUri.ToString());
+            _logger?.LogInformation("{datetime}: Sending Request: {requestMethod} - {requestUrl}",DateTime.Now,request.Method.Method,request.RequestUri.ToString());
 
             // cannot use the cancelationToken because its timeout is preconfigured to 100 seconds by Octokit
             var httpResponse = await base.SendAsync(request, CancellationToken.None).ConfigureAwait(false);
 
-            _logger?.LogInformation("Response Recieved. Status Code: {statusCode}",httpResponse.StatusCode.ToString());
+            _logger?.LogInformation("{datetime}: Response Recieved. Status Code: {statusCode}",DateTime.Now,httpResponse.StatusCode.ToString());
 
             var githubResponse = await GetGitHubResponse(httpResponse).ConfigureAwait(false);
            
