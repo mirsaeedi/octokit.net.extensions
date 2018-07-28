@@ -119,7 +119,7 @@ builtinPolicies.DefaultAbuseExceptionExceptionPolicy);
 
 ```
 
-# Install via [Nuget](https://www.nuget.org/packages/octokit.net.Extensions)
+# Install via [Nuget](https://www.nuget.org/packages/octokit.Extensions)
 
 ```powershell
 Install-Package  Octokit.Extensions
