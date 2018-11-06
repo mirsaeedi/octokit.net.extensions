@@ -62,6 +62,15 @@ namespace Octokit.Extensions
                 .ConfigureAwait(false);
             });
 
+        public Policy DefaultOctokitApiExceptionExceptionPolicy => Policy.Handle<Octokit.ApiException>()
+          .WaitAndRetryAsync(
+           retryCount: 3,
+           sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)),
+           onRetryAsync: async (exception, retryCount) =>
+           {
+               _logger?.LogInformation("A {exception} has occurred with {message}. Will try again shortly.", "ApiException",exception.Message);
+           });
+
         public IAsyncPolicy[] DefaultResilientPolicies => new IAsyncPolicy[]{DefaultHttpRequestExceptionPolicy,
                 DefaultRateLimitExceededExceptionPolicy,
                 DefaultAbuseExceptionExceptionPolicy,
