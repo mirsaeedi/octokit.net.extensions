@@ -74,6 +74,7 @@ namespace Octokit.Extensions
         public IAsyncPolicy[] DefaultResilientPolicies => new IAsyncPolicy[]{DefaultHttpRequestExceptionPolicy,
                 DefaultRateLimitExceededExceptionPolicy,
                 DefaultAbuseExceptionExceptionPolicy,
-                DefaultTimeoutExceptionPolicy };
+                DefaultTimeoutExceptionPolicy,
+                DefaultOctokitApiExceptionExceptionPolicy};
     }
 }
