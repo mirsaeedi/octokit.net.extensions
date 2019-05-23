@@ -27,4 +27,4 @@ test_script:
   - cmd: dotnet test
 on_finish :
   # any cleanup in here
-deploy: off
+deploy: of
