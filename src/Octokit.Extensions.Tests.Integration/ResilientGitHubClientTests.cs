@@ -24,7 +24,7 @@ namespace Octokit.Extensions.Tests.Integration
         public async Task MakesCachedWrappedOctokitRequest()
         {
             var credentials = Helper.Credentials;
-
+            var x=0;
             var client = new ResilientGitHubClientFactory()
                 .Create(new ProductHeaderValue("Octokit.Extensions.Tests"), credentials,new InMemoryCacheProvider(),new ResilientPolicies().DefaultResilientPolicies);
 
