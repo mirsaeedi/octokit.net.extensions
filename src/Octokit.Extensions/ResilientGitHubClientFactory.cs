@@ -15,10 +15,20 @@ namespace Octokit.Extensions
         {
             _logger = logger;
         }
+        
+        public GitHubClient Create(
+            ProductHeaderValue productHeaderValue,
+            Credentials credentials,
+            ICacheProvider cacheProvider=null,
+            params IAsyncPolicy[] policies)
+        {
+            return Create(productHeaderValue, credentials, null, cacheProvider, policies);
+        }
 
         public GitHubClient Create(
             ProductHeaderValue productHeaderValue,
             Credentials credentials,
+            Uri githubApiUrl,
             ICacheProvider cacheProvider=null,
             params IAsyncPolicy[] policies)
         {
@@ -28,7 +38,7 @@ namespace Octokit.Extensions
             var policy = policies.Length>1? Policy.WrapAsync(policies):policies[0];
             
             var githubConnection = new Connection(productHeaderValue,
-               GitHubClient.GitHubApiUrl,
+               githubApiUrl ?? GitHubClient.GitHubApiUrl,
                new InMemoryCredentialStore(credentials),
                new HttpClientAdapter(() => GetHttpHandlerChain(_logger, policy, cacheProvider)),
                new SimpleJsonSerializer()
