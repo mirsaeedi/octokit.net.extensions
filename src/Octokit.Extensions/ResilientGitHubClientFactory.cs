@@ -15,12 +15,21 @@ namespace Octokit.Extensions
         {
             _logger = logger;
         }
-
+        
         public GitHubClient Create(
             ProductHeaderValue productHeaderValue,
             Credentials credentials,
             ICacheProvider cacheProvider=null,
-            Uri githubApiUrl = null,
+            params IAsyncPolicy[] policies)
+        {
+            return Create(productHeaderValue, credentials, null, cacheProvider, policies);
+        }
+
+        public GitHubClient Create(
+            ProductHeaderValue productHeaderValue,
+            Credentials credentials,
+            Uri githubApiUrl,
+            ICacheProvider cacheProvider=null,
             params IAsyncPolicy[] policies)
         {
             if (policies is null || policies.Length==0)
