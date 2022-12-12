@@ -6,8 +6,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Mirsaeedi, OctopusDeploy</Authors>
     <Title>Octokit.Extensions</Title>
-    <Description>Enriches Octokit with Caching, Resilient Connections and Logging capabilities.
-</Description>
+    <Description>Enriches Octokit with Caching, Resilient Connections and Logging capabilities.</Description>
     <PackageProjectUrl>https://github.com/OctopusDeploy/octokit.net.extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/OctopusDeploy/octokit.net.extensions</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
@@ -17,6 +16,7 @@
     <PackageId>Octopus.Octokit.Net.Extensions</PackageId>
     <AssemblyName>Octokit.Extensions</AssemblyName>
     <RootNamespace>Octokit.Extensions</RootNamespace>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
