@@ -16,6 +16,9 @@ class Build : NukeBuild
 {
     const string CiBranchNameEnvVariable = "OCTOVERSION_CurrentBranch";
 
+    // OctoVersion.Tool ships no net11.0 build; let it run on the newer runtime.
+    static Build() => Environment.SetEnvironmentVariable("DOTNET_ROLL_FORWARD", "Major");
+
     [Parameter(
         "Whether to auto-detect the branch name - this is okay for a local build, but should not be used under CI.")]
     readonly bool AutoDetectBranch = IsLocalBuild;
